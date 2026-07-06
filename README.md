@@ -1,16 +1,18 @@
-# migration-safety-check
+<p align="center">
+  <img src="assets/readme-cover.svg" alt="Migration Safety Check cover" width="100%" />
+</p>
 
-**CLI Contract.** Review SQL migration notes for destructive operations and rollout gaps.
+# Migration Safety Check
 
-## Promise
+![stack](https://img.shields.io/badge/stack-Python-0891b2?style=flat-square) ![python](https://img.shields.io/badge/python-3.11-b45309?style=flat-square) ![license](https://img.shields.io/badge/license-MIT-be185d?style=flat-square) ![ci](https://img.shields.io/badge/ci-GitHub%20Actions-4b5563?style=flat-square)
 
-Database migrations are high-risk even when small. This CLI catches destructive operations, missing transactions, and weak rollback notes.
+Review SQL migration notes for destructive operations and rollout gaps.
 
-## Accepted Files
+## Why it exists
 
-`migration-safety-check` accepts SQL migration file or migration plan in text, JSON, JSONL, or CSV form.
+Small review tasks are easy to skip when the signal lives in notes, spreadsheets, or loosely formatted exports. `migration-safety-check` turns those checks into a repeatable command with plain findings and CI-friendly exit codes.
 
-## Exit Codes
+## Quick run
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -18,30 +20,31 @@ migration-safety-check examples/sample.txt
 migration-safety-check examples/sample.txt --json --fail-on medium
 ```
 
-## Sample
+## Rule set
 
-| Rule | Severity | Meaning |
-|---|---:|---|
+| Rule | Severity | What it catches |
+| --- | --- | --- |
 | `drop-operation` | high | destructive migration operation detected |
 | `missing-rollback` | medium | rollback plan is missing |
 | `no-transaction` | low | transaction behavior is unclear |
 
-## Development
+## Input
 
-```bash
-ruff check .
-pytest
-python -m migration_safety_check --help
-```
+The reader accepts plain text, JSON, JSONL, and CSV. That keeps it useful for hand-written notes, review exports, and small automation jobs.
 
-License: MIT
-
-### Example Input
+## Sample risky input
 
 ```text
 ALTER TABLE users DROP COLUMN legacy_id; rollback missing; transaction none
 ```
 
-### Architecture
+## Development
 
-`cli.py` reads files, `core.py` evaluates records, and `rules.py` keeps the migration-safety-check policy surface explicit.
+```bash
+python -m pip install -e ".[dev]"
+ruff check .
+pytest
+python -m migration_safety_check --help
+```
+
+`cli.py` handles arguments, `core.py` reads and evaluates records, and `rules.py` keeps the Migration Safety Check policy easy to review.
